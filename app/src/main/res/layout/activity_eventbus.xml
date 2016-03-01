@@ -36,8 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="100"
-            android:progress="20"
-            android:secondaryProgress="60" />
+            android:progress="0"
+            android:secondaryProgress="10" />
 
         <LinearLayout
             android:layout_width="match_parent"

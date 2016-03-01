@@ -5,8 +5,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.cc.cc_android.R;
+import com.android.cc.cc_android.log.FSLogcat;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by chenchao on 2016-2-24.
@@ -14,16 +20,44 @@ import com.android.cc.cc_android.R;
 public class EventBusActivity extends Activity {
     private Button btnAdd, btnReduce, btnVisible;
     private ProgressBar pbHor, pbLarge;
-
+    private Thread mThread;
+    private int mProgress = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_eventbus);
 
+        FSLogcat.i("eventbus", "onCreate. thread:" + Thread.currentThread().getId());
         pbHor = (ProgressBar) findViewById(R.id.pbHor);
         findViewById(R.id.btnAdd).setOnClickListener(mClickListner);
         findViewById(R.id.btnReduce).setOnClickListener(mClickListner);
+
+        EventBus.getDefault().register(this);
+
+        mThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FSLogcat.i("eventbus", "thread run :" + Thread.currentThread().getId());
+                try {
+                    while (true) {
+                        EventBus.getDefault().post(new MessageEvent(mProgress++ * 5));
+                        Thread.sleep(1000);
+                    }
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        mThread.start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mThread.interrupt();
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     private View.OnClickListener mClickListner = new View.OnClickListener() {
@@ -57,4 +91,20 @@ public class EventBusActivity extends Activity {
             }
         }
     };
+
+    // This method will be called when a MessageEvent is posted
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event){
+        FSLogcat.i("eventbus", "onMessageEvent:" + event.progress + " thread:" + Thread.currentThread().getId());
+        pbHor.setProgress(event.progress % 100);
+        pbHor.incrementProgressBy(-10);
+    }
+
+    public static class MessageEvent {
+        public final int progress;
+
+        public MessageEvent(int progress) {
+            this.progress = progress;
+        }
+    }
 }
