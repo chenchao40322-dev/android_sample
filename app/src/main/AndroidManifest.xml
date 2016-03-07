@@ -44,8 +44,17 @@
 
         <activity android:name=".viewPager.CCViewPagerActivity"
             android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity android:name=".service.messenger.MessengerActivity">
 
         </activity>
+
+        <service
+            android:name="com.android.cc.cc_android.service.messenger.MessengerService"
+            android:process=":remote" >
+        </service>
+
     </application>
 
 </manifest>

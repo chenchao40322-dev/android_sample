@@ -11,6 +11,7 @@ import android.widget.SimpleAdapter;
 import com.android.cc.cc_android.eventbus.EventBusActivity;
 import com.android.cc.cc_android.greendao.GreenDaoActivity;
 import com.android.cc.cc_android.listmenu.ListViewMenuActivity;
+import com.android.cc.cc_android.service.messenger.MessengerActivity;
 import com.android.cc.cc_android.viewPager.CCViewPagerActivity;
 
 import java.util.ArrayList;
@@ -53,6 +54,11 @@ public class MainActivity extends ListActivity {
         map = new HashMap<String, Object>();
         map.put("title", "eventbus");
         map.put("class", EventBusActivity.class);
+        myData.add(map);
+
+        map = new HashMap<String, Object>();
+        map.put("title", "messenger");
+        map.put("class", MessengerActivity.class);
         myData.add(map);
 
         return myData;
